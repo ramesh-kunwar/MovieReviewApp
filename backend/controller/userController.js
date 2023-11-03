@@ -4,8 +4,9 @@ import EmailVerificationToken from "../models/emailVerificationTokenSchema.js";
 import User from "../models/userSchema.js";
 import generateToken from "../utils/generateToken.js";
 
-import nodemailer from "nodemailer";
+import crypto from "crypto";
 import { generateMailTransporter, generateOTP } from "../utils/mailHelper.js";
+import PasswordReset from "../models/passwordResetSchema.js";
 
 /***************************************
  * @desc Get all users
@@ -186,5 +187,60 @@ export const resendEmailVerificationToken = asynchandler(async (req, res) => {
 
   res.status(201).json({
     msg: "Verification otp is sent to your email",
+  });
+});
+
+/***************************************
+ * @desc Forgot Password
+ * @route POST /api/users/login
+ * @access Public
+ *
+ ***************************************/
+
+export const forgotPassword = asynchandler(async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    res.status(400);
+    throw new Error("Email is required");
+  }
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    res.status(404);
+    throw new Error("User does not exist");
+  }
+
+  const existingToken = await PasswordReset.findOne({
+    owner: user._id,
+  });
+
+  if (existingToken) {
+    res.status(400);
+    throw new Error("Only after one hour you request for another OTP");
+  }
+
+  const token = crypto.randomBytes(20).toString("hex");
+
+  const passwordResetToken = await new PasswordReset({
+    owner: user._id,
+    token,
+  });
+
+  const resetPasswordUrl = `${req.protocol}://${req.get(
+    "host"
+  )}/api/users/forgotPassword?token=${token}&id=${user._id}`;
+
+  const transport = generateMailTransporter();
+  transport.sendMail({
+    from: "security@reviewapp.com",
+    to: user.email,
+    subject: "Reset Password",
+    html: `<p> Click this link to reset your password </p> <a href=${resetPasswordUrl}> ${resetPasswordUrl} </a>`,
+  });
+
+  await passwordResetToken.save();
+
+  res.status(200).json({
+    msg: "Reset password link is sent to your email",
   });
 });
