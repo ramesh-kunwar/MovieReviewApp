@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
+
 // create a schema with name, email, mobile and password
 const userSchema = mongoose.Schema(
   {
@@ -16,6 +17,11 @@ const userSchema = mongoose.Schema(
     },
     password: {
       type: String,
+      required: true,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
       required: true,
     },
   },
