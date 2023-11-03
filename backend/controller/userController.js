@@ -81,6 +81,28 @@ export const registerUser = asynchandler(async (req, res) => {
 });
 
 /***************************************
+ * @desc Login user
+ * @route POST /api/users/login
+ * @access Public
+ * ***************************************/
+
+export const loginUser = asynchandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email });
+  if (!user || !(await user.matchPassword(password))) {
+    res.status(401);
+    throw new Error("Invalid email or password");
+  }
+
+  generateToken(res, user._id);
+  res.status(200).json({
+    msg: "User logged in successfully",
+    user,
+  });
+});
+
+/***************************************
  * @desc Email verification
  * @route POST /api/users/verify
  * @access Public

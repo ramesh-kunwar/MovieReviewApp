@@ -2,6 +2,7 @@ import express from "express";
 import {
   forgotPassword,
   getUsers,
+  loginUser,
   registerUser,
   resendEmailVerificationToken,
   verifyEmail,
@@ -9,6 +10,7 @@ import {
 const router = express.Router();
 
 router.route("/").post(registerUser).get(getUsers);
+router.route("/login").post(loginUser)
 
 router.route("/verify-email").post(verifyEmail);
 router

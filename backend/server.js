@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import CONFIG from "./config/index.js";
 import connectDB from "./db/db.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
+import cookieParser from "cookie-parser";
 
 // routes import
 import userRoutes from "./routes/userRoutes.js";
@@ -14,6 +15,7 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // Connect to MongoDB
 connectDB();
