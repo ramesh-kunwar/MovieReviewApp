@@ -20,7 +20,7 @@ router.route("/profile").get(isLoggedIn, viewProfile)
 router.route("/verify-email").post(isLoggedIn, verifyEmail);
 router
   .route("/resend-email-verificationToken")
-  .post(resendEmailVerificationToken);
+  .post(isLoggedIn, resendEmailVerificationToken);
 router.route("/forgotPassword").post(forgotPassword);
 
 export default router;

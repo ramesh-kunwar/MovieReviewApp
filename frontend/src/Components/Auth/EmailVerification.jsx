@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { useVerifyEmailMutation } from "../../store/userApiSlice";
+import {
+  useResendEmailVerificationTokenMutation,
+  useVerifyEmailMutation,
+} from "../../store/userApiSlice";
 import { toast } from "react-hot-toast";
 const EmailVerification = () => {
   const [otp, setOtp] = useState("");
@@ -13,6 +16,8 @@ const EmailVerification = () => {
   const [verifyEmail, { isLoading, error, isSuccess }] =
     useVerifyEmailMutation();
 
+  const [resendVerification] = useResendEmailVerificationTokenMutation();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -20,6 +25,18 @@ const EmailVerification = () => {
       await verifyEmail({ otp }).unwrap();
       toast.success("Email Verified Successfully");
       navigate("/");
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.data?.message || error?.error);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    console.log("resend");
+
+    try {
+      await resendVerification().unwrap();
+      toast.success("Verification Code Sent Successfully");
     } catch (error) {
       console.log(error);
       toast.error(error?.data?.message || error?.error);
@@ -52,6 +69,13 @@ const EmailVerification = () => {
             value={"Submit"}
             className="btn btn-md btn-primary w-full text-white"
           />
+          <button
+            onClick={handleResendVerification}
+            type="button"
+            className="btn btn-sm text-xs text-gray-500 my-2 normal-case"
+          >
+            Resend Verification Code
+          </button>
         </div>
       </form>
     </div>

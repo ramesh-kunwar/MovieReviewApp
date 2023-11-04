@@ -43,6 +43,15 @@ export const productApiSlice = apiSlice.injectEndpoints({
       }),
       // keepUnusedDataFor: 5,
     }),
+
+    resendEmailVerificationToken: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/resend-email-verificationToken`,
+        method: "POST",
+        body: data,
+      }),
+      // keepUnusedDataFor: 5,
+    }),
   }),
 });
 
@@ -51,5 +60,6 @@ export const {
   useLoginMutation,
   useLogoutMutation,
   useProfileQuery,
-  useVerifyEmailMutation
+  useVerifyEmailMutation,
+  useResendEmailVerificationTokenMutation,
 } = productApiSlice;
