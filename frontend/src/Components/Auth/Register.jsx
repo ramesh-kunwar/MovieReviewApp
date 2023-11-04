@@ -20,7 +20,8 @@ const Register = () => {
     try {
       const res = await register({ name, email, password }).unwrap();
       dispatch(setCredentials({ ...res }));
-      toast.success("Registered Successfully. Please Verify Your Email");
+      toast.success("Registered Successfully. Please Verify Your Email ");
+      navigate("/emailVerification");
     } catch (error) {
       console.log(error);
     }

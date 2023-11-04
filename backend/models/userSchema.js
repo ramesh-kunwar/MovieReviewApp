@@ -24,6 +24,24 @@ const userSchema = mongoose.Schema(
       default: false,
       required: true,
     },
+
+    // emailVerification: {
+    //   owner: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "User",
+    //     required: true,
+    //   },
+    //   token: {
+    //     type: String,
+    //     // required: true,
+    //   },
+
+    //   createdAt: {
+    //     type: Date,
+    //     expires: 3600, // 1 hour
+    //     default: Date.now,
+    //   },
+    // },
   },
   {
     timestamps: true, // to create createdAt and updatedAt fields

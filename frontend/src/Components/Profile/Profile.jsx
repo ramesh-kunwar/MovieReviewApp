@@ -1,13 +1,17 @@
 import React from "react";
-import toast from "react-hot-toast";
-import { useSelector } from "react-redux";
+
+import { Link } from "react-router-dom";
+import { useProfileQuery } from "../../store/userApiSlice";
 
 const Profile = () => {
-  const { userInfo } = useSelector((state) => state.auth);
-  console.log(userInfo?.user);
+
+
+  const user = useProfileQuery();
+  const userDetails = user.data?.user;
+
   return (
     <div className="container mx-auto">
-      {!userInfo?.user?.isVerified && (
+      {!userDetails?.isVerified && (
         <div className="alert alert-error">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -22,14 +26,23 @@ const Profile = () => {
               d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          <span>Please Verify Your Email.</span>
+          <span>
+            Please Verify Your Email.{" "}
+            <Link
+              to={"/emailVerification"}
+              className="text-blue-800 font-light"
+            >
+              {" "}
+              Verify
+            </Link>
+          </span>
         </div>
       )}
 
       <h1 className="text-4xl font-bold my-6">Profile</h1>
-      <h1>{userInfo?.user?.name}</h1>
-      <h1>{userInfo?.user?.email}</h1>
-      <h1>{userInfo?.user?.createdAt}</h1>
+      <h1>{userDetails?.name}</h1>
+      <h1>{userDetails?.email}</h1>
+      <h1>{userDetails?.createdAt}</h1>
     </div>
   );
 };

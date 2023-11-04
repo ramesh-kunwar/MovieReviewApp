@@ -1,14 +1,31 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { useVerifyEmailMutation } from "../../store/userApiSlice";
+import { toast } from "react-hot-toast";
 const EmailVerification = () => {
   const [otp, setOtp] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const { userInfo } = useSelector((state) => state.auth);
+
+  const [verifyEmail, { isLoading, error, isSuccess }] =
+    useVerifyEmailMutation();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("submitted");
-    console.log(otp);
+
+    try {
+      await verifyEmail({ otp }).unwrap();
+      toast.success("Email Verified Successfully");
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.data?.message || error?.error);
+    }
   };
+
   return (
     <div className="flex h-screen justify-center align-middle items-center bg-slate-50">
       <form onSubmit={handleSubmit} action="">
@@ -21,10 +38,11 @@ const EmailVerification = () => {
           Email
         </label> */}
           <p className="text-gray-600">
-            OPT has been sent to your email abc@gmail.com
+            OPT has been sent to your email {userInfo?.user?.email}
           </p>
           <input
             onChange={(e) => setOtp(e.target.value)}
+            value={otp}
             type="text"
             placeholder="Type here"
             className="input input-bordered w-full my-6"

@@ -110,8 +110,12 @@ export const loginUser = asynchandler(async (req, res) => {
  * ***************************************/
 
 export const logoutUser = asynchandler(async (req, res) => {
-  res.cookie("token", null, {
+  res.cookie("jwt", null, {
     expires: new Date(Date.now()),
+  });
+
+  res.status(200).json({
+    msg: "User logged out successfully",
   });
 });
 
@@ -122,8 +126,12 @@ export const logoutUser = asynchandler(async (req, res) => {
  * ***************************************/
 
 export const verifyEmail = asynchandler(async (req, res) => {
-  const { userId, OTP } = req.body;
+  const userId = req.user._id;
+  const { otp } = req.body;
 
+  console.log(userId, otp);
+
+  console.log(userId);
   if (!userId) {
     res.status(400);
     throw new Error("User doesn't exist");
@@ -143,13 +151,15 @@ export const verifyEmail = asynchandler(async (req, res) => {
   const token = await EmailVerificationToken.findOne({
     owner: userId,
   });
+  console.log(token);
+  console.log(user);
 
   if (!token) {
     res.status(400);
     throw new Error("Invalid OTP");
   }
 
-  const isMatch = await token.cmpareToken(OTP);
+  const isMatch = await token.cmpareToken(otp);
   if (!isMatch) {
     res.status(400);
     throw new Error("Invalid OTP");
@@ -277,5 +287,21 @@ export const forgotPassword = asynchandler(async (req, res) => {
 
   res.status(200).json({
     msg: "Reset password link is sent to your email",
+  });
+});
+
+/***************************************
+ * @desc  View Profile
+ * @route GET /api/users/profile
+ * @access Private
+ *
+ ***************************************/
+
+export const viewProfile = asynchandler(async (req, res) => {
+  const user = await User.findById(req.user._id).select("-password");
+
+  res.status(200).json({
+    msg: "User profile",
+    user,
   });
 });

@@ -1,9 +1,26 @@
 import React from "react";
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { useLogoutMutation } from "../../store/userApiSlice";
 import { logout } from "../../store/authSlice";
+
 const Navbar = () => {
   const { userInfo } = useSelector((state) => state.auth);
+  const [logoutApi] = useLogoutMutation();
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      const res = await logoutApi();
+      // dispatch(setCredentials({ ...res }));
+      dispatch(logout());
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="container mx-auto">
@@ -31,8 +48,7 @@ const Navbar = () => {
             ) : (
               <label tabIndex={0} className="">
                 <Link
-                  onClick={() => logout()}
-                  // to={"/login"}
+                  to={"/login"}
                   className="btn btn-ghost normal-case text-xl"
                 >
                   Login
@@ -51,7 +67,7 @@ const Navbar = () => {
               </li>
 
               <li>
-                <Link to={"/logout"}>Logout</Link>
+                <Link onClick={handleLogout}>Logout</Link>
               </li>
             </ul>
           </div>
