@@ -103,6 +103,19 @@ export const loginUser = asynchandler(async (req, res) => {
 });
 
 /***************************************
+ * @desc Logout User
+ * @Method POST
+ * @route GET /api/users/logout
+ * @access Public
+ * ***************************************/
+
+export const logoutUser = asynchandler(async (req, res) => {
+  res.cookie("token", null, {
+    expires: new Date(Date.now()),
+  });
+});
+
+/***************************************
  * @desc Email verification
  * @route POST /api/users/verify
  * @access Public

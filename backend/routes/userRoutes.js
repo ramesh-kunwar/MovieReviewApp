@@ -3,6 +3,7 @@ import {
   forgotPassword,
   getUsers,
   loginUser,
+  logoutUser,
   registerUser,
   resendEmailVerificationToken,
   verifyEmail,
@@ -11,6 +12,7 @@ const router = express.Router();
 
 router.route("/").post(registerUser).get(getUsers);
 router.route("/login").post(loginUser)
+router.route("/logout").post(logoutUser)
 
 router.route("/verify-email").post(verifyEmail);
 router
