@@ -1,7 +1,33 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useLoginMutation } from "../../store/userApiSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { setCredentials } from "../../store/authSlice";
+import toast from "react-hot-toast";
 
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [login, { isLoading, error, isSuccess }] = useLoginMutation();
+
+  const { userInfo } = useSelector((state) => state.auth);
+  console.log(userInfo?.user);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await login({ email, password }).unwrap();
+      dispatch(setCredentials({ ...res }));
+      navigate("/");
+    } catch (error) {
+      toast.error(error?.data?.message || error?.error || error?.message);
+    }
+  };
+
   return (
     <section className="bg-gray-50 ">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -10,7 +36,11 @@ const Login = () => {
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl ">
               Sign in to your account
             </h1>
-            <form className="space-y-4 md:space-y-6" action="#">
+            <form
+              onSubmit={handleSubmit}
+              className="space-y-4 md:space-y-6"
+              action="#"
+            >
               <div>
                 <label
                   htmlFor="email"
@@ -19,6 +49,8 @@ const Login = () => {
                   Your email
                 </label>
                 <input
+                  onChange={(e) => setEmail(e.target.value)}
+                  value={email}
                   type="email"
                   name="email"
                   id="email"
@@ -35,6 +67,8 @@ const Login = () => {
                   Password
                 </label>
                 <input
+                  onChange={(e) => setPassword(e.target.value)}
+                  value={password}
                   type="password"
                   name="password"
                   id="password"
@@ -78,7 +112,6 @@ const Login = () => {
               </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Don't Have An Account ?
-
                 <Link
                   to={"/register"}
                   className="text-primary mx-2 hover:underline "

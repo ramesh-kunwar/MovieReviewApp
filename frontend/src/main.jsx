@@ -8,9 +8,12 @@ import {
 } from "react-router-dom";
 import App from "./App.jsx";
 import "./index.css";
-import Login from "./Components/Login/Login.jsx";
-import Register from "./Components/Register/Register.jsx";
-import EmailVerification from "./Components/EmailVerification/EmailVerification.jsx";
+import Login from "./Components/Auth/Login.jsx";
+import Register from "./Components/Auth/Register.jsx";
+import EmailVerification from "./Components/Auth/EmailVerification.jsx";
+import { Provider } from "react-redux";
+import store from "./store/store.js";
+import Profile from "./Components/Profile/Profile.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -19,6 +22,8 @@ const router = createBrowserRouter(
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/emailVerification" element={<EmailVerification />} />
+      <Route path="/profile" element={<Profile />} />
+
 
       {/* <Route path="" element={<PrivateRoute />}>
         <Route path="/shipping" element={<ShippingScreen />} />
@@ -38,8 +43,10 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <RouterProvider router={router}>
-      <App />
-    </RouterProvider>
+    <Provider store={store}>
+      <RouterProvider router={router}>
+        <App />
+      </RouterProvider>
+    </Provider>
   </React.StrictMode>
 );

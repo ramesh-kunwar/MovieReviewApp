@@ -1,7 +1,30 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useRegisterMutation } from "../../store/userApiSlice";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "../../store/authSlice";
+import toast from "react-hot-toast";
 
-const Login = () => {
+const Register = () => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [register, { isLoading, error, isSuccess }] = useRegisterMutation();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await register({ name, email, password }).unwrap();
+      dispatch(setCredentials({ ...res }));
+      toast.success("Registered Successfully. Please Verify Your Email");
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <section className="bg-gray-50 ">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -10,7 +33,11 @@ const Login = () => {
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl ">
               Register
             </h1>
-            <form className="space-y-4 md:space-y-6" action="#">
+            <form
+              onSubmit={handleSubmit}
+              className="space-y-4 md:space-y-6"
+              action="#"
+            >
               <div>
                 <label
                   htmlFor="name"
@@ -19,9 +46,11 @@ const Login = () => {
                   Your Name
                 </label>
                 <input
+                  onChange={(e) => setName(e.target.value)}
                   type="text"
                   name="name"
                   id="name"
+                  value={name}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5    "
                   placeholder="name"
                   required=""
@@ -35,6 +64,8 @@ const Login = () => {
                   Your email
                 </label>
                 <input
+                  onChange={(e) => setEmail(e.target.value)}
+                  value={email}
                   type="email"
                   name="email"
                   id="email"
@@ -52,6 +83,8 @@ const Login = () => {
                 </label>
                 <input
                   type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   name="password"
                   id="password"
                   placeholder="••••••••"
@@ -83,4 +116,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;
