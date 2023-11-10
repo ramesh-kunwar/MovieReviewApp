@@ -20,6 +20,7 @@ const actorSchema = mongoose.Schema(
     },
     avatar: {
       type: Object,
+
       url: String,
       public_id: String,
     },
