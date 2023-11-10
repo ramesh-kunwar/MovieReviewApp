@@ -17,30 +17,27 @@ export const createActor = asynchandler(async (req, res) => {
   // console.log(file);
   let imageResult;
 
-  try {
+  if (file) {
     const options = {
       use_filename: true,
       unique_filename: false,
       overwrite: true,
     };
     imageResult = await cloudinary.uploader.upload(file.path, options);
-    // console.log(secure_url, public_id);
-  } catch (error) {
-    console.log(error);
   }
+
   if (!name || !about || !gender) {
     res.status(400);
     throw new Error("Please fill all the fields");
   }
 
-  console.log(imageResult);
   const actor = await Actor.create({
     name,
     about,
     gender,
     avatar: {
-      url: imageResult.secure_url,
-      public_id: imageResult.public_id,
+      url: imageResult?.secure_url,
+      public_id: imageResult?.public_id,
     },
   });
 
